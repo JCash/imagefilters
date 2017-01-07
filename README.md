@@ -2,9 +2,9 @@
 
 A small one header C library for applying simple filters:
 
-![50 points](images/burger.jpg)
+![20 points](images/burger.jpg)
 
-![50 points](images/burger_out.jpg)
+![20 points](images/burger_out.jpg)
 
 
 # Disclaimer
