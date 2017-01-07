@@ -2,7 +2,7 @@
 
 A small one header C library for applying simple filters:
 
-Source/Result image:
+Source/Result image:<br>
 <img src="./images/burger.jpg" alt="Source image" width="350">
 <img src="./images/burger_out.jpg" alt="Result image" width="350">
 
