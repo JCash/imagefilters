@@ -2,9 +2,9 @@
 
 A small one header C library for applying simple filters:
 
-![20 points](images/burger.jpg)
-
-![20 points](images/burger_out.jpg)
+Source/Result image:
+<img src="./images/burger.jpg" alt="Source image" width="350">
+<img src="./images/burger_out.jpg" alt="Result image" width="350">
 
 
 # Disclaimer
