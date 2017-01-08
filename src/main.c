@@ -128,7 +128,12 @@ int main(int argc, const char** argv)
                                     ptsblue, sizeof(ptsblue)/sizeof(ptsblue[0]), 1.0f);
 
 
+    result = jc_if_gamma(image, width, height, nchannels, 2.00f, 1);
+
+    result = jc_if_contrast(image, width, height, nchannels, 0.15f, 1);
+
     result = jc_if_vignette(image, width, height, nchannels, 0.75f, 0.5f);
+
 
     uint64_t filterend = get_time();
     printf("Filters took %f ms\n", (filterend - filterstart) / 1000.0f);
@@ -157,7 +162,8 @@ int main(int argc, const char** argv)
         output = stdout;
     }
 
-    result = stbi_write_png_to_func(file_write_fn, output, width, height, nchannels, image, width * nchannels);
+    //result = stbi_write_png_to_func(file_write_fn, output, width, height, nchannels, image, width * nchannels);
+    result = stbi_write_tga_to_func(file_write_fn, output, width, height, nchannels, image);
 
     if( outputfile )
     {

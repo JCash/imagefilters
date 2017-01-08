@@ -13,14 +13,19 @@ int jc_if_apply_curve(uint8_t* image, int w, int h, int nchannels,
                         uint8_t* curve_blue, uint32_t curve_blue_npoints,
                         float blend );
 
+// falloff: 0-1
 int jc_if_vignette(uint8_t* image, int w, int h, int nchannels, float falloff, float blend);
+// constrast: -1 - 1
+int jc_if_contrast(uint8_t* image, int w, int h, int nchannels, float contrast, float blend);
+// gamma: >0
+int jc_if_gamma(uint8_t* image, int w, int h, int nchannels, float gamma, float blend);
 
 #if defined(JC_IMAGEFILTERS_IMPLEMENTATION)
 
 float jc_if_map_to_01(float value, float min, float max);
 float jc_if_mix(float a, float b, float t);
 float jc_if_apply_curve_value(uint8_t* pts, uint32_t npoints, float value);
-
+float jc_if_truncate(float v);
 
 float jc_if_map_to_01(float value, float min, float max)
 {
@@ -30,6 +35,11 @@ float jc_if_map_to_01(float value, float min, float max)
 float jc_if_mix(float a, float b, float t)
 {
     return a * (1.0f - t) + b * t;
+}
+
+float jc_if_truncate(float v)
+{
+    return (v > 255.0f) ? 255.0f : ( (v < 0) ? 0.0f : v );
 }
 
 float jc_if_apply_curve_value(uint8_t* pts, uint32_t npoints, float value)
@@ -107,5 +117,40 @@ int jc_if_vignette(uint8_t* image, int w, int h, int nchannels, float falloff, f
     return 0;    
 }
 
+int jc_if_contrast(uint8_t* image, int w, int h, int nchannels, float contrast, float blend)
+{
+    contrast *= 255.0f;
+    float factor = (259.0f * (contrast + 255.0f)) / (255.0f * (259.0f - contrast));
+
+    for( int i = 0; i < w * h; ++i )
+    {
+        for( int c = 0; c < nchannels; ++c )
+        {
+            float value = image[i*nchannels + c];
+            float mapped = jc_if_truncate( (factor * (value - 128) + 128 ));
+            image[i*nchannels + c] = (uint8_t)(jc_if_mix(value, mapped, blend));
+
+        }
+    }
+    return 0;
+}
+
+
+int jc_if_gamma(uint8_t* image, int w, int h, int nchannels, float gamma, float blend)
+{
+    float gamma_correction = 1 / gamma;
+
+    for( int i = 0; i < w * h; ++i )
+    {
+        for( int c = 0; c < nchannels; ++c )
+        {
+            float value = image[i*nchannels + c];
+            float mapped = 255.0f * powf(value / 255.0f, gamma_correction);
+            image[i*nchannels + c] = (uint8_t)(jc_if_mix(value, mapped, blend));
+
+        }
+    }
+    return 0;
+}
 
 #endif // JC_IMAGEFILTERS_IMPLEMENTATION
